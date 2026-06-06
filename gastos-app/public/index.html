@@ -559,7 +559,7 @@ function renderGastos(){
           <td><span class="badge badge-${r.medio}">${r.medio==='credito'?'Crédito':'Débito'}</span></td>
           <td><span class="badge badge-${r.pago.toLowerCase()}">${r.pago}</span></td>
           <td class="mono" style="color:var(--text2)"><span style="font-size:11px;color:var(--text3)">${deudor} </span>${fmt(mitadR)}</td>
-          <td>${!r.parentId?`<button class="btn btn-sm btn-danger" onclick="deleteGasto('${r.id}')">×</button>`:''}</td>
+          <td>${(!r.parentId||r.cuotaNum===1)?`<button class="btn btn-sm btn-danger" onclick="deleteGasto('${r.parentId||r.id}')">×</button>`:''}</td>
         </tr>`;
       }).join('');
   document.getElementById('countLabel').textContent=regs.length+' registros';
