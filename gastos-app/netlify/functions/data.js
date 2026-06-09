@@ -7,7 +7,7 @@ const https = require("https");
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;       // var de entorno en Netlify
 const GITHUB_REPO  = process.env.GITHUB_REPO;        // ej: "fede/gastos-data"
 const GITHUB_FILE  = process.env.GITHUB_FILE || "data.json";
-const NETLIFY_SITE = process.env.URL;                 // Netlify lo inyecta automáticamente
+const NETLIFY_SITE = 'https://gastospaufede.netlify.app';                 // Netlify lo inyecta automáticamente
 
 // ── Valida el JWT de Netlify Identity ──────────────────────────────────────
 async function validateToken(authHeader) {
