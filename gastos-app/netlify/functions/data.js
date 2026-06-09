@@ -1,4 +1,4 @@
-    // netlify/functions/data.js
+// netlify/functions/data.js
 const https = require("https");
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
