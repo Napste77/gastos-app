@@ -6,7 +6,6 @@
 <title>Gastos Fede & Pau</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- Netlify Identity Widget -->
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
   :root {
@@ -25,29 +24,15 @@
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
-
-  /* ── LOGIN SCREEN ── */
-  #loginScreen {
-    min-height:100vh;display:flex;align-items:center;justify-content:center;
-    background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.15) 0%, transparent 70%), var(--bg);
-  }
-  .login-card {
-    background:var(--surface);border:1px solid var(--border);border-radius:20px;
-    padding:48px 40px;width:100%;max-width:400px;text-align:center;
-  }
-  .login-logo { font-size:40px; margin-bottom:16px; }
-  .login-title { font-size:22px;font-weight:600;margin-bottom:6px; }
-  .login-title span { color:var(--purple); }
-  .login-sub { font-size:14px;color:var(--text2);margin-bottom:32px; }
-  .btn-login {
-    width:100%;padding:13px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;
-    cursor:pointer;border:none;background:var(--purple2);color:white;font-family:var(--font);
-    transition:background .15s;
-  }
-  .btn-login:hover { background:#6d28d9; }
-  .login-hint { font-size:12px;color:var(--text3);margin-top:16px; }
-
-  /* ── NAV ── */
+  #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,0.15) 0%,transparent 70%),var(--bg);}
+  .login-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 40px;width:100%;max-width:400px;text-align:center;}
+  .login-logo{font-size:40px;margin-bottom:16px;}
+  .login-title{font-size:22px;font-weight:600;margin-bottom:6px;}
+  .login-title span{color:var(--purple);}
+  .login-sub{font-size:14px;color:var(--text2);margin-bottom:32px;}
+  .btn-login{width:100%;padding:13px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;border:none;background:var(--purple2);color:white;font-family:var(--font);transition:background .15s;}
+  .btn-login:hover{background:#6d28d9;}
+  .login-hint{font-size:12px;color:var(--text3);margin-top:16px;}
   .nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;height:56px;position:sticky;top:0;z-index:100;}
   .nav-brand{font-size:15px;font-weight:600;margin-right:32px;display:flex;align-items:center;gap:8px;}
   .nav-brand span{color:var(--purple);}
@@ -63,16 +48,12 @@
   .nav-save-btn.saved{color:var(--green);border-color:var(--green);}
   .btn-logout{padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text3);font-family:var(--font);transition:all .15s;}
   .btn-logout:hover{color:var(--red);border-color:var(--red);}
-
-  /* ── SYNC STATUS ── */
   .sync-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 24px;font-size:12px;color:var(--text3);display:flex;align-items:center;gap:8px;}
   .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);}
   .sync-dot.ok{background:var(--green);}
   .sync-dot.error{background:var(--red);}
   .sync-dot.loading{background:var(--amber);animation:pulse 1s infinite;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-
-  /* ── LAYOUT ── */
   .container{max-width:1100px;margin:0 auto;padding:28px 20px;}
   .page{display:none;}.page.active{display:block;}
   .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
@@ -157,6 +138,11 @@
   .month-card-sub{font-size:11px;color:var(--text3);margin-top:3px;}
   .month-card-bar{display:flex;height:4px;border-radius:2px;overflow:hidden;margin-top:10px;gap:2px;}
   .tr-cuota{background:rgba(96,165,250,0.03);}
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--purple2);border-radius:var(--radius);padding:14px 18px;font-size:13px;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:999;display:flex;align-items:center;gap:10px;animation:slideIn .25s ease;max-width:320px;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .toast-icon{font-size:18px;flex-shrink:0;}
+  .toast-close{margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:0 0 0 8px;}
   @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
   .fade-in{animation:fadeIn .2s ease;}
   @media(max-width:700px){.grid2{grid-template-columns:1fr;}.metrics{grid-template-columns:1fr 1fr;}.form-grid-gastos{grid-template-columns:1fr 1fr;}}
@@ -164,7 +150,7 @@
 </head>
 <body>
 
-<!-- ═══════════ LOGIN SCREEN ═══════════ -->
+<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-card">
     <div class="login-logo">💸</div>
@@ -175,7 +161,7 @@
   </div>
 </div>
 
-<!-- ═══════════ APP (oculta hasta login) ═══════════ -->
+<!-- APP -->
 <div id="appShell" style="display:none;">
   <nav class="nav">
     <div class="nav-brand">💸 <span>Fede</span> & Pau</div>
@@ -183,16 +169,16 @@
       <button class="nav-tab active" onclick="showPage('gastos')">Gastos</button>
       <button class="nav-tab" onclick="showPage('ahorros')">Ahorros</button>
       <button class="nav-tab" onclick="showPage('resumen')">Resumen</button>
+      <button class="nav-tab" onclick="showPage('lista')">🛒 Super</button>
     </div>
     <div class="nav-right">
       <button class="nav-save-btn" id="saveBtn" onclick="saveToGitHub()">
-        <span id="saveBtnIcon">💾</span> <span id="saveBtnText">Guardar</span>
+        <span id="saveBtnIcon">💾</span><span id="saveBtnText">Guardar</span>
       </button>
       <span class="nav-user" id="navUser"></span>
       <button class="btn-logout" onclick="logout()">Salir</button>
     </div>
   </nav>
-
   <div class="sync-bar" id="syncBar">
     <div class="sync-dot loading" id="syncDot"></div>
     <span id="syncMsg">Cargando datos...</span>
@@ -320,85 +306,141 @@
     </div>
   </div>
   </div>
+
+  <!-- SUPER -->
+  <div id="page-lista" class="page">
+  <div class="container">
+    <div class="metrics" id="metricsLista"></div>
+    <div class="grid2" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="section-header"><span class="section-title">Agregar producto</span></div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="position:relative;">
+            <div class="form-label">Producto</div>
+            <input type="text" id="l-nombre" placeholder="Escribí para buscar o agregar nuevo..." autocomplete="off" oninput="renderAutocomplete(this.value)" onkeydown="if(event.key==='Enter')addItem()">
+            <div id="l-sugerencias" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);z-index:50;max-height:260px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.4);"></div>
+          </div>
+          <div class="grid2" style="margin-bottom:0;">
+            <div><div class="form-label">Cantidad</div><input type="text" id="l-cantidad" placeholder="ej. 2, 1kg, 500g" onkeydown="if(event.key==='Enter')addItem()"></div>
+            <div><div class="form-label">Categoría</div>
+              <select id="l-cat">
+                <option value="Lácteos">🥛 Lácteos</option>
+                <option value="Verduras">🥦 Verduras</option>
+                <option value="Frutas">🍎 Frutas</option>
+                <option value="Carnes">🥩 Carnes</option>
+                <option value="Almacén">🧴 Almacén</option>
+                <option value="Limpieza">🧹 Limpieza</option>
+                <option value="Panadería">🍞 Panadería</option>
+                <option value="Bebidas">🥤 Bebidas</option>
+                <option value="Freezer">🧊 Freezer</option>
+                <option value="Fiambres">🧀 Fiambres</option>
+                <option value="Higiene">🪥 Higiene</option>
+                <option value="Mascotas">🐾 Mascotas</option>
+                <option value="Otros">📦 Otros</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-primary" onclick="addItem()">+ Agregar</button>
+            <button class="btn" style="background:var(--surface2);color:var(--text2);border:1px solid var(--border2);" onclick="limpiarComprados()">🗑 Limpiar comprados</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-header"><span class="section-title">Filtrar por categoría</span></div>
+        <div id="catFiltros" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Lista</span>
+        <span id="listaCount" style="font-size:12px;color:var(--text3)"></span>
+      </div>
+      <div id="listaItems"></div>
+    </div>
+  </div>
+  </div>
+
 </div><!-- /appShell -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ════════════════════════════════════════════════════════════
-// STATE & CONSTANTS
-// ════════════════════════════════════════════════════════════
 const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const CATS=['Comida','Servicios','Entretenimiento','Salud','Transporte','Otros'];
 const CAT_COLORS=['#fbbf24','#2dd4bf','#a78bfa','#4ade80','#60a5fa','#9494b0'];
-const FEDE_COLOR='#2dd4bf', PAU_COLOR='#f472b6';
+const FEDE_COLOR='#2dd4bf',PAU_COLOR='#f472b6';
+const CAT_ICONS={'Lácteos':'🥛','Verduras':'🥦','Frutas':'🍎','Carnes':'🥩','Almacén':'🧴','Limpieza':'🧹','Panadería':'🍞','Bebidas':'🥤','Freezer':'🧊','Fiambres':'🧀','Higiene':'🪥','Mascotas':'🐾','Otros':'📦'};
 
-let data={gastos:[],metas:[],aportes:[]};
-let currentMonth=new Date().getMonth(), currentYear=new Date().getFullYear();
+const PRODUCTOS_DEFAULT=[
+  {n:'Leche entera',c:'Lácteos'},{n:'Leche descremada',c:'Lácteos'},{n:'Yogur',c:'Lácteos'},{n:'Queso cremoso',c:'Lácteos'},{n:'Queso rallado',c:'Lácteos'},{n:'Manteca',c:'Lácteos'},{n:'Crema de leche',c:'Lácteos'},{n:'Dulce de leche',c:'Lácteos'},{n:'Ricota',c:'Lácteos'},
+  {n:'Papa',c:'Verduras'},{n:'Cebolla',c:'Verduras'},{n:'Tomate',c:'Verduras'},{n:'Zanahoria',c:'Verduras'},{n:'Lechuga',c:'Verduras'},{n:'Zapallo',c:'Verduras'},{n:'Ajo',c:'Verduras'},{n:'Pimiento',c:'Verduras'},{n:'Brócoli',c:'Verduras'},{n:'Espinaca',c:'Verduras'},{n:'Choclo',c:'Verduras'},{n:'Berenjena',c:'Verduras'},{n:'Apio',c:'Verduras'},{n:'Remolacha',c:'Verduras'},{n:'Batata',c:'Verduras'},
+  {n:'Banana',c:'Frutas'},{n:'Manzana',c:'Frutas'},{n:'Naranja',c:'Frutas'},{n:'Mandarina',c:'Frutas'},{n:'Limón',c:'Frutas'},{n:'Pera',c:'Frutas'},{n:'Uva',c:'Frutas'},{n:'Durazno',c:'Frutas'},{n:'Kiwi',c:'Frutas'},{n:'Melón',c:'Frutas'},{n:'Sandía',c:'Frutas'},
+  {n:'Pollo entero',c:'Carnes'},{n:'Pechuga de pollo',c:'Carnes'},{n:'Muslo de pollo',c:'Carnes'},{n:'Carne picada',c:'Carnes'},{n:'Milanesa de novillo',c:'Carnes'},{n:'Asado',c:'Carnes'},{n:'Vacío',c:'Carnes'},{n:'Chorizo',c:'Carnes'},{n:'Salchicha',c:'Carnes'},{n:'Pescado',c:'Carnes'},{n:'Paleta',c:'Carnes'},{n:'Costilla',c:'Carnes'},
+  {n:'Fideos',c:'Almacén'},{n:'Arroz',c:'Almacén'},{n:'Harina',c:'Almacén'},{n:'Aceite',c:'Almacén'},{n:'Sal',c:'Almacén'},{n:'Azúcar',c:'Almacén'},{n:'Yerba',c:'Almacén'},{n:'Café',c:'Almacén'},{n:'Té',c:'Almacén'},{n:'Galletitas',c:'Almacén'},{n:'Lentejas',c:'Almacén'},{n:'Garbanzos',c:'Almacén'},{n:'Puré de tomate',c:'Almacén'},{n:'Mayonesa',c:'Almacén'},{n:'Ketchup',c:'Almacén'},{n:'Mostaza',c:'Almacén'},{n:'Atún en lata',c:'Almacén'},{n:'Caldo en cubos',c:'Almacén'},{n:'Polenta',c:'Almacén'},{n:'Avena',c:'Almacén'},{n:'Cereal',c:'Almacén'},{n:'Vinagre',c:'Almacén'},{n:'Aceite de oliva',c:'Almacén'},{n:'Orégano',c:'Almacén'},{n:'Pimienta',c:'Almacén'},{n:'Azúcar mascabo',c:'Almacén'},{n:'Mermelada',c:'Almacén'},{n:'Miel',c:'Almacén'},{n:'Maicena',c:'Almacén'},{n:'Levadura',c:'Almacén'},{n:'Cacao',c:'Almacén'},
+  {n:'Detergente',c:'Limpieza'},{n:'Lavandina',c:'Limpieza'},{n:'Jabón en polvo',c:'Limpieza'},{n:'Suavizante',c:'Limpieza'},{n:'Esponja',c:'Limpieza'},{n:'Trapo de piso',c:'Limpieza'},{n:'Bolsas de basura',c:'Limpieza'},{n:'Limpiador multiuso',c:'Limpieza'},{n:'Desodorante ambiente',c:'Limpieza'},{n:'Lustramuebles',c:'Limpieza'},{n:'Limpiavidrios',c:'Limpieza'},{n:'Escoba',c:'Limpieza'},
+  {n:'Pan lactal',c:'Panadería'},{n:'Pan francés',c:'Panadería'},{n:'Medialunas',c:'Panadería'},{n:'Facturas',c:'Panadería'},{n:'Tostadas',c:'Panadería'},{n:'Pan árabe',c:'Panadería'},{n:'Budín',c:'Panadería'},
+  {n:'Agua mineral',c:'Bebidas'},{n:'Soda',c:'Bebidas'},{n:'Gaseosa',c:'Bebidas'},{n:'Jugo',c:'Bebidas'},{n:'Cerveza',c:'Bebidas'},{n:'Vino',c:'Bebidas'},{n:'Energizante',c:'Bebidas'},{n:'Agua saborizada',c:'Bebidas'},{n:'Tónica',c:'Bebidas'},
+  {n:'Helado',c:'Freezer'},{n:'Pizza congelada',c:'Freezer'},{n:'Empanadas congeladas',c:'Freezer'},{n:'Vegetales congelados',c:'Freezer'},{n:'Papas fritas congeladas',c:'Freezer'},
+  {n:'Jamón cocido',c:'Fiambres'},{n:'Salame',c:'Fiambres'},{n:'Mortadela',c:'Fiambres'},{n:'Queso en fetas',c:'Fiambres'},{n:'Paté',c:'Fiambres'},{n:'Bondiola',c:'Fiambres'},
+  {n:'Jabón de manos',c:'Higiene'},{n:'Shampoo',c:'Higiene'},{n:'Acondicionador',c:'Higiene'},{n:'Pasta dental',c:'Higiene'},{n:'Cepillo de dientes',c:'Higiene'},{n:'Desodorante',c:'Higiene'},{n:'Papel higiénico',c:'Higiene'},{n:'Servilletas',c:'Higiene'},{n:'Algodón',c:'Higiene'},{n:'Afeitadora',c:'Higiene'},{n:'Crema de afeitar',c:'Higiene'},{n:'Protector solar',c:'Higiene'},
+].map(p=>({nombre:p.n,cat:p.c}));
+
+let data={gastos:[],metas:[],aportes:[],lista:[],listaBase:[]};
+let currentMonth=new Date().getMonth(),currentYear=new Date().getFullYear();
 let charts={};
-let identityToken=null;
-let pendingChanges=false;
-let saveTimeout=null;
+let identityToken=null,pendingChanges=false,saveTimeout=null;
+let lastDataHash='',pollingInterval=null,notifPermission=false;
+let filtrosCat=new Set(['todos']);
 
-// ════════════════════════════════════════════════════════════
-// AUTH — Netlify Identity
-// ════════════════════════════════════════════════════════════
-netlifyIdentity.on('login', user => {
-  identityToken = user.token.access_token;
+// ════ AUTH ════
+netlifyIdentity.on('login',user=>{
+  identityToken=user.token.access_token;
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('appShell').style.display='block';
-  document.getElementById('navUser').textContent = user.email;
+  document.getElementById('navUser').textContent=user.email;
   netlifyIdentity.close();
   loadFromGitHub();
 });
-
-netlifyIdentity.on('logout', () => {
+netlifyIdentity.on('logout',()=>{
   identityToken=null;
   document.getElementById('loginScreen').style.display='flex';
   document.getElementById('appShell').style.display='none';
+  if(pollingInterval) clearInterval(pollingInterval);
 });
-
-netlifyIdentity.on('init', user => {
+netlifyIdentity.on('init',user=>{
   if(user){
-    identityToken = user.token?.access_token;
+    identityToken=user.token?.access_token;
     if(identityToken){
       document.getElementById('loginScreen').style.display='none';
       document.getElementById('appShell').style.display='block';
-      document.getElementById('navUser').textContent = user.email;
+      document.getElementById('navUser').textContent=user.email;
       loadFromGitHub();
     }
   }
 });
+function logout(){ netlifyIdentity.logout(); }
 
-function logout(){
-  netlifyIdentity.logout();
-}
-
-// ════════════════════════════════════════════════════════════
-// GITHUB SYNC via Netlify Function
-// ════════════════════════════════════════════════════════════
-function setSyncStatus(state, msg){
-  const dot=document.getElementById('syncDot');
-  const txt=document.getElementById('syncMsg');
-  dot.className='sync-dot '+state;
-  txt.textContent=msg;
+// ════ GITHUB SYNC ════
+function setSyncStatus(state,msg){
+  document.getElementById('syncDot').className='sync-dot '+state;
+  document.getElementById('syncMsg').textContent=msg;
 }
 
 async function loadFromGitHub(){
   setSyncStatus('loading','Cargando datos desde GitHub...');
-  try {
-    const res = await fetch('/.netlify/functions/data', {
-      headers:{ Authorization: `Bearer ${identityToken}` }
-    });
+  try{
+    const res=await fetch('/.netlify/functions/data',{headers:{Authorization:`Bearer ${identityToken}`}});
     if(!res.ok) throw new Error('HTTP '+res.status);
-    const json = await res.json();
-    data = { gastos: json.gastos||[], metas: json.metas||[], aportes: json.aportes||[] };
+    const json=await res.json();
+    data={gastos:json.gastos||[],metas:json.metas||[],aportes:json.aportes||[],lista:json.lista||[],listaBase:json.listaBase||[]};
     setSyncStatus('ok','Datos sincronizados · '+new Date().toLocaleTimeString('es-AR'));
+    lastDataHash=hashData(data);
+    iniciarPolling();
     renderGastos();
-  } catch(e) {
-    setSyncStatus('error','Error cargando datos: '+e.message);
-    // Fallback a localStorage si hay datos previos
-    const local = localStorage.getItem('fp_gastos2');
-    if(local) { data=JSON.parse(local); renderGastos(); }
+  }catch(e){
+    setSyncStatus('error','Error cargando: '+e.message);
+    const local=localStorage.getItem('fp_gastos2');
+    if(local){ data=JSON.parse(local); renderGastos(); }
   }
 }
 
@@ -409,46 +451,100 @@ async function saveToGitHub(){
   const txt=document.getElementById('saveBtnText');
   btn.classList.add('saving'); icon.textContent='⏳'; txt.textContent='Guardando...';
   setSyncStatus('loading','Guardando en GitHub...');
-  try {
-    const res = await fetch('/.netlify/functions/data', {
-      method:'POST',
-      headers:{
-        Authorization:`Bearer ${identityToken}`,
-        'Content-Type':'application/json'
-      },
-      body: JSON.stringify(data)
-    });
+  try{
+    const res=await fetch('/.netlify/functions/data',{method:'POST',headers:{Authorization:`Bearer ${identityToken}`,'Content-Type':'application/json'},body:JSON.stringify(data)});
     if(!res.ok) throw new Error('HTTP '+res.status);
-    localStorage.setItem('fp_gastos2', JSON.stringify(data));
+    localStorage.setItem('fp_gastos2',JSON.stringify(data));
+    lastDataHash=hashData(data);
     btn.classList.remove('saving'); btn.classList.add('saved');
     icon.textContent='✓'; txt.textContent='Guardado';
     setSyncStatus('ok','Guardado en GitHub · '+new Date().toLocaleTimeString('es-AR'));
     pendingChanges=false;
-    setTimeout(()=>{ btn.classList.remove('saved'); icon.textContent='💾'; txt.textContent='Guardar'; }, 2500);
-  } catch(e) {
+    setTimeout(()=>{ btn.classList.remove('saved'); icon.textContent='💾'; txt.textContent='Guardar'; },2500);
+  }catch(e){
     btn.classList.remove('saving'); icon.textContent='⚠️'; txt.textContent='Error';
     setSyncStatus('error','Error guardando: '+e.message);
-    setTimeout(()=>{ icon.textContent='💾'; txt.textContent='Guardar'; }, 3000);
+    setTimeout(()=>{ icon.textContent='💾'; txt.textContent='Guardar'; },3000);
   }
 }
 
-// Auto-save 3s después de cada cambio
 function markDirty(){
   pendingChanges=true;
-  localStorage.setItem('fp_gastos2', JSON.stringify(data)); // backup local inmediato
+  localStorage.setItem('fp_gastos2',JSON.stringify(data));
   clearTimeout(saveTimeout);
-  saveTimeout=setTimeout(saveToGitHub, 3000);
+  saveTimeout=setTimeout(saveToGitHub,3000);
 }
 
-// ════════════════════════════════════════════════════════════
-// LOGIC — Cuotas
-// ════════════════════════════════════════════════════════════
+// ════ POLLING + NOTIFICACIONES ════
+function hashData(d){ return JSON.stringify({lista:d.lista,listaBase:d.listaBase,gastos:d.gastos,metas:d.metas,aportes:d.aportes}); }
+
+async function pedirPermisoNotif(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission==='granted'){ notifPermission=true; return; }
+  if(Notification.permission!=='denied'){
+    const p=await Notification.requestPermission();
+    notifPermission=p==='granted';
+  }
+}
+
+function mostrarNotif(titulo,cuerpo){
+  if(notifPermission&&Notification.permission==='granted'){
+    new Notification(titulo,{body:cuerpo,icon:'https://em-content.zobj.net/source/twitter/376/shopping-cart_1f6d2.png'});
+  }
+  mostrarToast(titulo+' — '+cuerpo);
+}
+
+function mostrarToast(msg){
+  const existing=document.getElementById('appToast');
+  if(existing) existing.remove();
+  const t=document.createElement('div');
+  t.id='appToast'; t.className='toast';
+  t.innerHTML=`<span class="toast-icon">🔔</span><span style="flex:1">${msg}</span><button class="toast-close" onclick="this.parentElement.remove()">×</button>`;
+  document.body.appendChild(t);
+  setTimeout(()=>{ if(t.parentElement) t.remove(); },5000);
+}
+
+async function pollCambios(){
+  if(!identityToken) return;
+  try{
+    const res=await fetch('/.netlify/functions/data',{headers:{Authorization:`Bearer ${identityToken}`}});
+    if(!res.ok) return;
+    const remoto=await res.json();
+    const nuevoHash=hashData(remoto);
+    if(lastDataHash&&nuevoHash!==lastDataHash){
+      // Detectar qué cambió para el mensaje
+      const listaAntes=JSON.stringify(data.lista);
+      const gastosAntes=JSON.stringify(data.gastos);
+      data={gastos:remoto.gastos||[],metas:remoto.metas||[],aportes:remoto.aportes||[],lista:remoto.lista||[],listaBase:remoto.listaBase||[]};
+      lastDataHash=nuevoHash;
+      localStorage.setItem('fp_gastos2',JSON.stringify(data));
+      let msg='';
+      if(JSON.stringify(data.lista)!==listaAntes) msg='actualizó la lista del super';
+      else if(JSON.stringify(data.gastos)!==gastosAntes) msg='agregó un gasto nuevo';
+      else msg='actualizó algo en la app';
+      mostrarNotif('¡Hay cambios!', msg);
+      const activePage=document.querySelector('.page.active')?.id;
+      if(activePage==='page-lista') renderLista();
+      if(activePage==='page-gastos') renderGastos();
+      if(activePage==='page-ahorros') renderAhorros();
+      setSyncStatus('ok','Actualizado · '+new Date().toLocaleTimeString('es-AR'));
+    }
+  }catch(e){ console.warn('Poll error',e); }
+}
+
+function iniciarPolling(){
+  pedirPermisoNotif();
+  if(pollingInterval) clearInterval(pollingInterval);
+  pollingInterval=setInterval(pollCambios,30000);
+}
+
+// ════ CUOTAS ════
 function expandirCuotas(g){
   if(g.cuotas<=1||g.medio!=='credito') return [g];
   const montoCuota=Math.round(g.monto/g.cuotas);
   const [y,m,d]=g.fecha.split('-').map(Number);
   return Array.from({length:g.cuotas},(_,i)=>{
-    let nm=m-1+i, ny=y+Math.floor(nm/12); nm=nm%12;
+    let nm=m-1+i,ny=y+Math.floor(nm/12); nm=nm%12;
     const fecha=`${ny}-${String(nm+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     return {...g,id:g.id+'_c'+(i+1),parentId:g.id,fecha,monto:montoCuota,cuotaNum:i+1};
   });
@@ -468,25 +564,23 @@ function allMonths(){
   return [...keys].sort();
 }
 
-// ════════════════════════════════════════════════════════════
-// UI HELPERS
-// ════════════════════════════════════════════════════════════
+// ════ HELPERS ════
 function fmt(n){ return '$'+Math.round(n).toLocaleString('es-AR'); }
 
 function toggleCuotas(){
   const medio=document.getElementById('g-medio').value;
-  const field=document.getElementById('cuotasField');
-  medio==='credito'?field.classList.remove('hidden'):field.classList.add('hidden');
+  document.getElementById('cuotasField').classList.toggle('hidden',medio!=='credito');
 }
 
 function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach(t=>{ if(t.textContent.toLowerCase().includes(name.substring(0,6))) t.classList.add('active'); });
+  document.querySelectorAll('.nav-tab').forEach(t=>{ if(t.textContent.toLowerCase().includes(name==='lista'?'super':name.substring(0,6))) t.classList.add('active'); });
   if(name==='gastos') renderGastos();
   if(name==='ahorros') renderAhorros();
   if(name==='resumen') renderResumen();
+  if(name==='lista') renderLista();
 }
 
 function renderChart(id,type,chartData,options){
@@ -511,16 +605,14 @@ function selectMonth(key){
   renderGastos();
 }
 
-// ════════════════════════════════════════════════════════════
-// RENDER GASTOS
-// ════════════════════════════════════════════════════════════
+// ════ GASTOS ════
 function renderGastos(){
   renderMonthChips();
   const regs=getRegistrosMes(currentMonth,currentYear);
   const total=regs.reduce((a,r)=>a+r.monto,0);
   const fedePago=regs.filter(r=>r.pago==='Fede').reduce((a,r)=>a+r.monto,0);
   const pauPago=regs.filter(r=>r.pago==='Pau').reduce((a,r)=>a+r.monto,0);
-  const mitad=total/2, fedeBalance=fedePago-mitad, pauBalance=pauPago-mitad;
+  const mitad=total/2,fedeBalance=fedePago-mitad,pauBalance=pauPago-mitad;
 
   document.getElementById('metricsGastos').innerHTML=`
     <div class="metric accent"><div class="metric-label">Total del mes</div><div class="metric-value">${fmt(total)}</div><div class="metric-sub">${regs.length} registros</div></div>
@@ -530,15 +622,11 @@ function renderGastos(){
   `;
 
   let cls='even',who='¡Están a mano!',det='',amt='$0',amtColor='var(--green)';
-  if(total>0 && Math.abs(fedeBalance)>=1){
-    if(fedeBalance<0){ cls='pays-fede'; who='Fede le transfiere a Pau'; det=`Pau pagó ${fmt(pauPago)} · Fede pagó ${fmt(fedePago)}`; amt=fmt(Math.abs(fedeBalance)); amtColor='var(--teal)'; }
-    else { cls='pays-pau'; who='Pau le transfiere a Fede'; det=`Fede pagó ${fmt(fedePago)} · Pau pagó ${fmt(pauPago)}`; amt=fmt(Math.abs(pauBalance)); amtColor='var(--pink)'; }
+  if(total>0&&Math.abs(fedeBalance)>=1){
+    if(fedeBalance<0){ cls='pays-fede';who='Fede le transfiere a Pau';det=`Pau pagó ${fmt(pauPago)} · Fede pagó ${fmt(fedePago)}`;amt=fmt(Math.abs(fedeBalance));amtColor='var(--teal)'; }
+    else{ cls='pays-pau';who='Pau le transfiere a Fede';det=`Fede pagó ${fmt(fedePago)} · Pau pagó ${fmt(pauPago)}`;amt=fmt(Math.abs(pauBalance));amtColor='var(--pink)'; }
   }
-  document.getElementById('balanceBox').innerHTML=`
-    <div class="balance-box ${cls}">
-      <div><div class="balance-who">${who}</div><div class="balance-detail">${det}</div></div>
-      <div class="balance-amount" style="color:${amtColor}">${amt}</div>
-    </div>`;
+  document.getElementById('balanceBox').innerHTML=`<div class="balance-box ${cls}"><div><div class="balance-who">${who}</div><div class="balance-detail">${det}</div></div><div class="balance-amount" style="color:${amtColor}">${amt}</div></div>`;
 
   const catTotals=CATS.map(c=>regs.filter(r=>r.cat===c).reduce((a,r)=>a+r.monto,0));
   renderChart('catChart','bar',{labels:CATS,datasets:[{data:catTotals,backgroundColor:CAT_COLORS,borderRadius:6,borderSkipped:false}]},{plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5c5c7a',font:{size:11}},grid:{display:false}},y:{ticks:{color:'#5c5c7a',callback:v=>'$'+Math.round(v/1000)+'k',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}}}});
@@ -546,22 +634,22 @@ function renderGastos(){
 
   const tbody=document.getElementById('gastosTable');
   tbody.innerHTML=regs.length===0
-    ? '<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text3)">Sin gastos en este mes</td></tr>'
-    : regs.map(r=>{
-        const mitadR=r.monto/2, deudor=r.pago==='Fede'?'Pau':'Fede';
-        const esCuota=r.cuotas>1&&r.medio==='credito';
-        return `<tr class="${esCuota?'tr-cuota':''}">
-          <td style="color:var(--text2);font-size:12px;">${r.fecha?r.fecha.split('-').reverse().join('/'):'—'}</td>
-          <td>${r.desc}</td>
-          <td class="cat-${r.cat}">${r.cat}</td>
-          <td>${esCuota?`<span class="badge badge-cuota">${r.cuotaNum}/${r.cuotas}</span>`:'<span style="color:var(--text3);font-size:12px;">—</span>'}</td>
-          <td class="mono">${fmt(r.monto)}</td>
-          <td><span class="badge badge-${r.medio}">${r.medio==='credito'?'Crédito':'Débito'}</span></td>
-          <td><span class="badge badge-${r.pago.toLowerCase()}">${r.pago}</span></td>
-          <td class="mono" style="color:var(--text2)"><span style="font-size:11px;color:var(--text3)">${deudor} </span>${fmt(mitadR)}</td>
-          <td>${(!r.parentId||r.cuotaNum===1)?`<button class="btn btn-sm btn-danger" onclick="deleteGasto('${r.parentId||r.id}')">×</button>`:''}</td>
-        </tr>`;
-      }).join('');
+    ?'<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text3)">Sin gastos en este mes</td></tr>'
+    :regs.map(r=>{
+      const mitadR=r.monto/2,deudor=r.pago==='Fede'?'Pau':'Fede';
+      const esCuota=r.cuotas>1&&r.medio==='credito';
+      return `<tr class="${esCuota?'tr-cuota':''}">
+        <td style="color:var(--text2);font-size:12px;">${r.fecha?r.fecha.split('-').reverse().join('/'):'—'}</td>
+        <td>${r.desc}</td>
+        <td class="cat-${r.cat}">${r.cat}</td>
+        <td>${esCuota?`<span class="badge badge-cuota">${r.cuotaNum}/${r.cuotas}</span>`:'<span style="color:var(--text3);font-size:12px;">—</span>'}</td>
+        <td class="mono">${fmt(r.monto)}</td>
+        <td><span class="badge badge-${r.medio}">${r.medio==='credito'?'Crédito':'Débito'}</span></td>
+        <td><span class="badge badge-${r.pago.toLowerCase()}">${r.pago}</span></td>
+        <td class="mono" style="color:var(--text2)"><span style="font-size:11px;color:var(--text3)">${deudor} </span>${fmt(mitadR)}</td>
+        <td>${(!r.parentId||r.cuotaNum===1)?`<button class="btn btn-sm btn-danger" onclick="deleteGasto('${r.parentId||r.id}')">×</button>`:''}</td>
+      </tr>`;
+    }).join('');
   document.getElementById('countLabel').textContent=regs.length+' registros';
 }
 
@@ -587,9 +675,7 @@ function deleteGasto(id){
   markDirty(); renderGastos();
 }
 
-// ════════════════════════════════════════════════════════════
-// RENDER AHORROS
-// ════════════════════════════════════════════════════════════
+// ════ AHORROS ════
 function renderAhorros(){
   const totalMeta=data.metas.reduce((a,m)=>a+m.meta,0);
   const totalAportado=data.metas.reduce((a,m)=>a+data.aportes.filter(ap=>ap.metaId===m.id).reduce((s,ap)=>s+ap.monto,0),0);
@@ -648,9 +734,7 @@ function deleteMeta(id){
   markDirty(); renderAhorros();
 }
 
-// ════════════════════════════════════════════════════════════
-// RENDER RESUMEN
-// ════════════════════════════════════════════════════════════
+// ════ RESUMEN ════
 function renderResumen(){
   const months=allMonths();
   let totalH=0,fedeH=0,pauH=0;
@@ -687,9 +771,134 @@ function selectMonthAndGo(key){
   showPage('gastos');
 }
 
-// ════════════════════════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════════════════════════
+// ════ SUPER / LISTA ════
+function getAllProductos(){
+  const custom=data.listaBase||[];
+  const customNombres=new Set(custom.map(p=>p.nombre.toLowerCase()));
+  return [...PRODUCTOS_DEFAULT.filter(p=>!customNombres.has(p.nombre.toLowerCase())),...custom];
+}
+
+function renderLista(){
+  if(!data.lista) data.lista=[];
+  const total=data.lista.length;
+  const comprados=data.lista.filter(i=>i.comprado).length;
+  const pendientes=total-comprados;
+  document.getElementById('metricsLista').innerHTML=`
+    <div class="metric accent"><div class="metric-label">Total ítems</div><div class="metric-value">${total}</div></div>
+    <div class="metric green"><div class="metric-label">Comprados</div><div class="metric-value">${comprados}</div></div>
+    <div class="metric amber"><div class="metric-label">Pendientes</div><div class="metric-value">${pendientes}</div></div>
+  `;
+  const catsEnLista=['todos',...new Set(data.lista.map(i=>i.cat))];
+  document.getElementById('catFiltros').innerHTML=catsEnLista.map(cat=>{
+    const isActive=filtrosCat.has('todos')?(cat==='todos'):filtrosCat.has(cat);
+    const icon=cat==='todos'?'🛒':(CAT_ICONS[cat]||'📦');
+    return `<div class="month-chip ${isActive?'active':''}" onclick="toggleFiltro('${cat}')">${icon} ${cat==='todos'?'Todos':cat}</div>`;
+  }).join('');
+  let items=filtrosCat.has('todos')?data.lista:data.lista.filter(i=>filtrosCat.has(i.cat));
+  const grupos={};
+  items.forEach(i=>{ if(!grupos[i.cat]) grupos[i.cat]=[]; grupos[i.cat].push(i); });
+  const el=document.getElementById('listaItems');
+  if(items.length===0){
+    el.innerHTML='<div class="empty">La lista está vacía — buscá un producto arriba</div>';
+  } else {
+    el.innerHTML=Object.entries(grupos).map(([cat,its])=>`
+      <div style="margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">${CAT_ICONS[cat]||'📦'} ${cat}</div>
+        ${its.map(item=>`
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--border);${item.comprado?'opacity:.45;':''}">
+            <div onclick="toggleComprado('${item.id}')" style="width:20px;height:20px;border-radius:50%;border:2px solid ${item.comprado?'var(--green)':'var(--border2)'};background:${item.comprado?'var(--green)':'transparent'};cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;">
+              ${item.comprado?'<span style="color:#0f0f13;font-size:11px;font-weight:700;">✓</span>':''}
+            </div>
+            <span style="flex:1;font-size:14px;${item.comprado?'text-decoration:line-through;color:var(--text3);':''}">${item.nombre}</span>
+            <span style="font-size:12px;color:var(--text2);font-family:var(--mono);min-width:40px;text-align:right;">${item.cantidad||''}</span>
+            <button class="btn btn-sm btn-danger" onclick="deleteItem('${item.id}')">×</button>
+          </div>`).join('')}
+      </div>`).join('');
+  }
+  document.getElementById('listaCount').textContent=`${pendientes} pendientes · ${comprados} comprados`;
+  renderAutocomplete('');
+}
+
+function renderAutocomplete(query){
+  const el=document.getElementById('l-sugerencias');
+  if(!el) return;
+  const q=query.toLowerCase().trim();
+  if(!q){ el.style.display='none'; return; }
+  const yaEnLista=new Set(data.lista.map(i=>i.nombre.toLowerCase()));
+  const sugs=getAllProductos().filter(p=>p.nombre.toLowerCase().includes(q)&&!yaEnLista.has(p.nombre.toLowerCase()));
+  if(!sugs.length){
+    // Mostrar opción de agregar nuevo
+    el.style.display='block';
+    el.innerHTML=`<div onclick="addItemCustom('${query.trim()}')" style="padding:9px 14px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:8px;color:var(--purple);" onmouseover="this.style.background='var(--surface3)'" onmouseout="this.style.background=''">
+      <span>➕</span><span>Agregar "<strong>${query.trim()}</strong>" como nuevo producto</span>
+    </div>`;
+    return;
+  }
+  el.style.display='block';
+  el.innerHTML=sugs.slice(0,8).map(p=>`
+    <div onclick="seleccionarProducto('${p.nombre.replace(/'/g,"\\'")}','${p.cat}')" style="padding:9px 14px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);transition:background .1s;" onmouseover="this.style.background='var(--surface3)'" onmouseout="this.style.background=''">
+      <span>${CAT_ICONS[p.cat]||'📦'}</span>
+      <span style="flex:1">${p.nombre}</span>
+      <span style="font-size:11px;color:var(--text3)">${p.cat}</span>
+    </div>`).join('');
+}
+
+function seleccionarProducto(nombre,cat){
+  document.getElementById('l-nombre').value=nombre;
+  document.getElementById('l-cat').value=cat;
+  document.getElementById('l-sugerencias').style.display='none';
+  document.getElementById('l-cantidad').focus();
+}
+
+function addItemCustom(nombre){
+  document.getElementById('l-nombre').value=nombre;
+  document.getElementById('l-sugerencias').style.display='none';
+  document.getElementById('l-cantidad').focus();
+}
+
+function toggleFiltro(cat){
+  if(cat==='todos'){ filtrosCat=new Set(['todos']); }
+  else{ filtrosCat.delete('todos'); filtrosCat.has(cat)?filtrosCat.delete(cat):filtrosCat.add(cat); if(!filtrosCat.size) filtrosCat.add('todos'); }
+  renderLista();
+}
+
+function addItem(){
+  const nombre=document.getElementById('l-nombre').value.trim();
+  const cantidad=document.getElementById('l-cantidad').value.trim();
+  const cat=document.getElementById('l-cat').value;
+  if(!nombre){ alert('Poné el nombre del producto.'); return; }
+  if(!data.lista) data.lista=[];
+  // Si es nuevo, guardarlo en listaBase para futuras búsquedas
+  const existe=getAllProductos().some(p=>p.nombre.toLowerCase()===nombre.toLowerCase());
+  if(!existe){
+    if(!data.listaBase) data.listaBase=[];
+    data.listaBase.push({nombre,cat});
+  }
+  data.lista.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2),nombre,cantidad,cat,comprado:false});
+  markDirty();
+  document.getElementById('l-nombre').value='';
+  document.getElementById('l-cantidad').value='';
+  document.getElementById('l-sugerencias').style.display='none';
+  renderLista();
+}
+
+function toggleComprado(id){
+  const item=data.lista.find(i=>i.id===id);
+  if(item){ item.comprado=!item.comprado; markDirty(); renderLista(); }
+}
+
+function deleteItem(id){
+  data.lista=data.lista.filter(i=>i.id!==id);
+  markDirty(); renderLista();
+}
+
+function limpiarComprados(){
+  if(!data.lista.some(i=>i.comprado)) return;
+  data.lista=data.lista.filter(i=>!i.comprado);
+  markDirty(); renderLista();
+}
+
+// ════ INIT ════
 document.getElementById('g-fecha').value=new Date().toISOString().split('T')[0];
 document.getElementById('s-fecha-aporte').value=new Date().toISOString().split('T')[0];
 </script>
