@@ -608,18 +608,55 @@ function installPWA(){ if(!deferredInstallPrompt) return; deferredInstallPrompt.
 if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }); }
 
 // ════ AUTH ════
-netlifyIdentity.on('login',user=>{ identityToken=user.token.access_token; document.getElementById('loginScreen').style.display='none'; document.getElementById('appShell').style.display='block'; netlifyIdentity.close(); loadFromGitHub(); });
-netlifyIdentity.on('logout',()=>{ identityToken=null; document.getElementById('loginScreen').style.display='flex'; document.getElementById('appShell').style.display='none'; if(pollingInterval) clearInterval(pollingInterval); });
-netlifyIdentity.on('init',user=>{ if(user&&user.token?.access_token){ identityToken=user.token.access_token; document.getElementById('loginScreen').style.display='none'; document.getElementById('appShell').style.display='block'; loadFromGitHub(); } });
+function showApp(){ document.getElementById('loginScreen').style.display='none'; document.getElementById('appShell').style.display='block'; }
+function showLogin(){ document.getElementById('loginScreen').style.display='flex'; document.getElementById('appShell').style.display='none'; }
+
+// Refresca el token antes de cada llamada — evita el 401 por expiración
+async function getFreshToken(){
+  return new Promise((resolve,reject)=>{
+    const user = netlifyIdentity.currentUser();
+    if(!user){ reject(new Error('No hay usuario')); return; }
+    user.jwt().then(token=>{ identityToken=token; resolve(token); }).catch(reject);
+  });
+}
+
+netlifyIdentity.on('login',user=>{
+  identityToken=user.token.access_token;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appShell').style.display='block';
+  netlifyIdentity.close();
+  loadFromGitHub();
+});
+netlifyIdentity.on('logout',()=>{
+  identityToken=null;
+  showLogin();
+  if(pollingInterval) clearInterval(pollingInterval);
+});
+netlifyIdentity.on('init',user=>{
+  if(user&&user.token?.access_token){
+    identityToken=user.token.access_token;
+    showApp();
+    loadFromGitHub();
+  }
+});
 function logout(){ netlifyIdentity.logout(); }
 
 // ════ SYNC ════
 function setSyncStatus(s,m){ document.getElementById('syncDot').className='sync-dot '+s; document.getElementById('syncMsg').textContent=m; }
 
+async function apiFetch(url, opts={}){
+  // Siempre refresca el token antes de llamar
+  try{ await getFreshToken(); } catch(e){ throw new Error('Sesión expirada — volvé a iniciar sesión'); }
+  const headers = { Authorization: `Bearer ${identityToken}`, ...(opts.headers||{}) };
+  const res = await fetch(url, {...opts, headers});
+  if(res.status===401){ netlifyIdentity.open('login'); throw new Error('401 - sesión expirada'); }
+  return res;
+}
+
 async function loadFromGitHub(){
   setSyncStatus('loading','Cargando...');
   try{
-    const res=await fetch('/.netlify/functions/data',{headers:{Authorization:`Bearer ${identityToken}`}});
+    const res=await apiFetch('/.netlify/functions/data');
     if(!res.ok) throw new Error('HTTP '+res.status);
     const json=await res.json();
     data={gastos:json.gastos||[],metas:json.metas||[],aportes:json.aportes||[],lista:json.lista||[],listaBase:json.listaBase||[]};
@@ -635,11 +672,11 @@ async function loadFromGitHub(){
 }
 
 async function saveToGitHub(){
-  if(!identityToken) return;
   const btn=document.getElementById('saveBtn'),icon=document.getElementById('saveBtnIcon'),txt=document.getElementById('saveBtnText');
   btn.classList.add('saving'); icon.textContent='⏳'; txt.textContent='...';
+  setSyncStatus('loading','Guardando...');
   try{
-    const res=await fetch('/.netlify/functions/data',{method:'POST',headers:{Authorization:`Bearer ${identityToken}`,'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const res=await apiFetch('/.netlify/functions/data',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
     if(!res.ok) throw new Error('HTTP '+res.status);
     localStorage.setItem('fp_gastos2',JSON.stringify(data));
     lastDataHash=JSON.stringify(data);
@@ -660,9 +697,8 @@ function markDirty(){ pendingChanges=true; localStorage.setItem('fp_gastos2',JSO
 async function pedirPermisoNotif(){ if(!('Notification' in window)) return; if(Notification.permission==='granted'){ notifPermission=true; return; } if(Notification.permission!=='denied'){ const p=await Notification.requestPermission(); notifPermission=p==='granted'; } }
 function mostrarToast(msg){ const e=document.getElementById('appToast'); if(e) e.remove(); const t=document.createElement('div'); t.id='appToast'; t.className='toast'; t.innerHTML=`<span style="font-size:18px;flex-shrink:0">🔔</span><span style="flex:1">${msg}</span><button class="toast-close" onclick="this.parentElement.remove()">×</button>`; document.body.appendChild(t); setTimeout(()=>{ if(t.parentElement) t.remove(); },5000); }
 async function pollCambios(){
-  if(!identityToken) return;
   try{
-    const res=await fetch('/.netlify/functions/data',{headers:{Authorization:`Bearer ${identityToken}`}});
+    const res=await apiFetch('/.netlify/functions/data');
     if(!res.ok) return;
     const remoto=await res.json();
     const nh=JSON.stringify(remoto);
@@ -678,7 +714,7 @@ async function pollCambios(){
       if(ap==='page-gastos') renderGastos();
       setSyncStatus('ok','Actualizado · '+new Date().toLocaleTimeString('es-AR'));
     }
-  }catch(e){}
+  }catch(e){ console.warn('Poll:',e.message); }
 }
 function iniciarPolling(){ pedirPermisoNotif(); if(pollingInterval) clearInterval(pollingInterval); pollingInterval=setInterval(pollCambios,30000); }
 
@@ -941,39 +977,3 @@ function openEditProd(nombre){
 function confirmarEditProd(){
   const nuevoNombre=document.getElementById('editProdNombre').value.trim();
   const nuevaCat=document.getElementById('editProdCat').value;
-  const nuevoEmoji=document.getElementById('editProdEmojiInput').value.trim();
-  if(!nuevoNombre) return;
-  if(!data.listaBase) data.listaBase=[];
-  // Si ya está en listaBase, actualizar; si no, agregar
-  const idx=data.listaBase.findIndex(p=>p.nombre===editProdNombre);
-  if(idx>=0){ data.listaBase[idx]={...data.listaBase[idx],nombre:nuevoNombre,cat:nuevaCat,...(nuevoEmoji?{emoji:nuevoEmoji}:{})}; }
-  else { data.listaBase.push({nombre:nuevoNombre,cat:nuevaCat,...(nuevoEmoji?{emoji:nuevoEmoji}:{})}); }
-  // Si el producto original era default, agregar override en listaBase con nombre original marcado como override
-  if(PROD_EMOJI[editProdNombre]!==undefined){ PROD_EMOJI[nuevoNombre]=nuevoEmoji||PROD_EMOJI[editProdNombre]; }
-  markDirty(); closeModal('modalEditProd'); renderCatalogo();
-}
-
-// Emoji picker
-function fillEmojiGrid(gridId, inputId, previewId){
-  document.getElementById(gridId).innerHTML=EMOJI_OPTS.map(e=>`<div class="emoji-opt" onclick="selectEmoji('${e}','${inputId}','${previewId}')">${e}</div>`).join('');
-}
-function selectEmoji(e,inputId,previewId){ document.getElementById(inputId).value=e; document.getElementById(previewId).textContent=e; document.getElementById(inputId).closest('.modal-card').querySelector('[id$="EmojiPicker"],[id="emojiPicker"],[id="prodEmojiPicker"]').style.display='none'; }
-function updateEmojiPreview(){ const v=document.getElementById('editEmojiInput').value; if(v) document.getElementById('editEmojiPreview').textContent=v; }
-function updateProdEmojiPreview(){ const v=document.getElementById('editProdEmojiInput').value; if(v) document.getElementById('editProdEmojiPreview').textContent=v; }
-function toggleEmojiPicker(){ const p=document.getElementById('emojiPicker'); p.style.display=p.style.display==='none'?'block':'none'; }
-function toggleProdEmojiPicker(){ const p=document.getElementById('prodEmojiPicker'); p.style.display=p.style.display==='none'?'block':'none'; }
-
-function closeModal(id){ document.getElementById(id).style.display='none'; modalProd=null; editItemId=null; }
-function closeModalIfOutside(e,id){ if(e.target===document.getElementById(id)) closeModal(id); }
-
-function toggleComprado(id){ const item=data.lista.find(i=>i.id===id); if(item){ item.comprado=!item.comprado; markDirty(); renderLista(); } }
-function deleteItem(id){ data.lista=data.lista.filter(i=>i.id!==id); markDirty(); renderLista(); }
-function limpiarComprados(){ data.lista=data.lista.filter(i=>!i.comprado); markDirty(); renderLista(); }
-function vaciarCarrito(){ if(!data.lista.length) return; if(!confirm('¿Vaciar toda la lista?')) return; data.lista=[]; markDirty(); renderLista(); }
-
-// ════ INIT ════
-document.getElementById('g-fecha').value=new Date().toISOString().split('T')[0];
-document.getElementById('s-fecha-aporte').value=new Date().toISOString().split('T')[0];
-</script>
-</body>
-</html>
