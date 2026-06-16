@@ -14,17 +14,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<script>
-if (window.netlifyIdentity) {
-  window.netlifyIdentity.on("init", user => {
-    if (!user) {
-      window.netlifyIdentity.on("login", () => {
-        document.location.href = "/";
-      });
-    }
-  });
-}
-</script>
 <style>
 :root{
   --bg:#0f0f13;--surface:#1a1a22;--surface2:#22222e;--surface3:#2a2a38;
@@ -622,19 +611,9 @@ if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator
 function showApp(){ document.getElementById('loginScreen').style.display='none'; document.getElementById('appShell').style.display='block'; }
 function showLogin(){ document.getElementById('loginScreen').style.display='flex'; document.getElementById('appShell').style.display='none'; }
 
-// Refresca el token antes de cada llamada — evita el 401 por expiración
-async function getFreshToken(){
-  return new Promise((resolve,reject)=>{
-    const user = netlifyIdentity.currentUser();
-    if(!user){ reject(new Error('No hay usuario')); return; }
-    user.jwt().then(token=>{ identityToken=token; resolve(token); }).catch(reject);
-  });
-}
-
 netlifyIdentity.on('login',user=>{
   identityToken=user.token.access_token;
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('appShell').style.display='block';
+  showApp();
   netlifyIdentity.close();
   loadFromGitHub();
 });
@@ -644,23 +623,43 @@ netlifyIdentity.on('logout',()=>{
   if(pollingInterval) clearInterval(pollingInterval);
 });
 netlifyIdentity.on('init',user=>{
-  if(user&&user.token?.access_token){
-    identityToken=user.token.access_token;
-    showApp();
-    loadFromGitHub();
+  if(user){
+    // Obtener token fresco directamente del objeto user
+    try{
+      identityToken=user.token.access_token;
+      showApp();
+      loadFromGitHub();
+    }catch(e){ showLogin(); }
   }
 });
+// Refresca token si está por vencer (llamar antes de cada request)
+async function getFreshToken(){
+  const user=netlifyIdentity.currentUser();
+  if(!user) throw new Error('No hay sesión');
+  // jwt() renueva automáticamente si el token expiró
+  const token=await user.jwt(true);
+  identityToken=token;
+  return token;
+}
 function logout(){ netlifyIdentity.logout(); }
 
 // ════ SYNC ════
 function setSyncStatus(s,m){ document.getElementById('syncDot').className='sync-dot '+s; document.getElementById('syncMsg').textContent=m; }
 
 async function apiFetch(url, opts={}){
-  // Siempre refresca el token antes de llamar
-  try{ await getFreshToken(); } catch(e){ throw new Error('Sesión expirada — volvé a iniciar sesión'); }
-  const headers = { Authorization: `Bearer ${identityToken}`, ...(opts.headers||{}) };
-  const res = await fetch(url, {...opts, headers});
-  if(res.status===401){ netlifyIdentity.open('login'); throw new Error('401 - sesión expirada'); }
+  // Intentar refrescar token; si falla usar el que tenemos
+  try{ await getFreshToken(); }catch(e){ if(!identityToken){ netlifyIdentity.open('login'); throw new Error('Sin sesión'); } }
+  const headers={ Authorization:`Bearer ${identityToken}`, ...(opts.headers||{}) };
+  const res=await fetch(url,{...opts,headers});
+  if(res.status===401){
+    // Token expirado definitivamente — intentar refresh una vez más
+    try{
+      await getFreshToken();
+      const retry=await fetch(url,{...opts,headers:{ Authorization:`Bearer ${identityToken}`, ...(opts.headers||{}) }});
+      if(!retry.ok && retry.status===401){ netlifyIdentity.open('login'); throw new Error('Sesión expirada'); }
+      return retry;
+    }catch(e2){ netlifyIdentity.open('login'); throw new Error('Sesión expirada'); }
+  }
   return res;
 }
 
@@ -988,3 +987,39 @@ function openEditProd(nombre){
 function confirmarEditProd(){
   const nuevoNombre=document.getElementById('editProdNombre').value.trim();
   const nuevaCat=document.getElementById('editProdCat').value;
+  const nuevoEmoji=document.getElementById('editProdEmojiInput').value.trim();
+  if(!nuevoNombre) return;
+  if(!data.listaBase) data.listaBase=[];
+  // Si ya está en listaBase, actualizar; si no, agregar
+  const idx=data.listaBase.findIndex(p=>p.nombre===editProdNombre);
+  if(idx>=0){ data.listaBase[idx]={...data.listaBase[idx],nombre:nuevoNombre,cat:nuevaCat,...(nuevoEmoji?{emoji:nuevoEmoji}:{})}; }
+  else { data.listaBase.push({nombre:nuevoNombre,cat:nuevaCat,...(nuevoEmoji?{emoji:nuevoEmoji}:{})}); }
+  // Si el producto original era default, agregar override en listaBase con nombre original marcado como override
+  if(PROD_EMOJI[editProdNombre]!==undefined){ PROD_EMOJI[nuevoNombre]=nuevoEmoji||PROD_EMOJI[editProdNombre]; }
+  markDirty(); closeModal('modalEditProd'); renderCatalogo();
+}
+
+// Emoji picker
+function fillEmojiGrid(gridId, inputId, previewId){
+  document.getElementById(gridId).innerHTML=EMOJI_OPTS.map(e=>`<div class="emoji-opt" onclick="selectEmoji('${e}','${inputId}','${previewId}')">${e}</div>`).join('');
+}
+function selectEmoji(e,inputId,previewId){ document.getElementById(inputId).value=e; document.getElementById(previewId).textContent=e; document.getElementById(inputId).closest('.modal-card').querySelector('[id$="EmojiPicker"],[id="emojiPicker"],[id="prodEmojiPicker"]').style.display='none'; }
+function updateEmojiPreview(){ const v=document.getElementById('editEmojiInput').value; if(v) document.getElementById('editEmojiPreview').textContent=v; }
+function updateProdEmojiPreview(){ const v=document.getElementById('editProdEmojiInput').value; if(v) document.getElementById('editProdEmojiPreview').textContent=v; }
+function toggleEmojiPicker(){ const p=document.getElementById('emojiPicker'); p.style.display=p.style.display==='none'?'block':'none'; }
+function toggleProdEmojiPicker(){ const p=document.getElementById('prodEmojiPicker'); p.style.display=p.style.display==='none'?'block':'none'; }
+
+function closeModal(id){ document.getElementById(id).style.display='none'; modalProd=null; editItemId=null; }
+function closeModalIfOutside(e,id){ if(e.target===document.getElementById(id)) closeModal(id); }
+
+function toggleComprado(id){ const item=data.lista.find(i=>i.id===id); if(item){ item.comprado=!item.comprado; markDirty(); renderLista(); } }
+function deleteItem(id){ data.lista=data.lista.filter(i=>i.id!==id); markDirty(); renderLista(); }
+function limpiarComprados(){ data.lista=data.lista.filter(i=>!i.comprado); markDirty(); renderLista(); }
+function vaciarCarrito(){ if(!data.lista.length) return; if(!confirm('¿Vaciar toda la lista?')) return; data.lista=[]; markDirty(); renderLista(); }
+
+// ════ INIT ════
+document.getElementById('g-fecha').value=new Date().toISOString().split('T')[0];
+document.getElementById('s-fecha-aporte').value=new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
